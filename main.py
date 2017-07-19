@@ -2,74 +2,34 @@
 
 import sys
 import os
-import sqlite3
-import sqlalchemy
+import json
 
-from sqlalchemy import Column, ForeignKey, Integer, String
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
-from sqlalchemy import create_engine
+class Character:
+    #'Player character class'
 
+    def __init__(self, name,  hitPoints, armorClass, initiative, spd, dex, const, intel, wis, char):
+        self.hitPoints = hitPoints
+        self.temporaryHitPoints = hitPoints
+        self.armorClass = armorClass
+        self.initiative = initiative
+        self.speed = spd
+        self.dexterity = dex
+        self.constitution = const
+        self.intelligence = intel
+        self.wisdom = wis
+        self.charisma = char
+        self.name = name
 
-conn = sqlite3.connect('DnD.db')
+class Spell:
 
-Base = declarative_base()
-
-class Character(Base):
-    'Player character class'
-    __table__ = 'Character'
-    hitPoints = Column(Integer, primary_key=True)
-    temporaryHitPoints = Column(String(250), nullable=False)
-    armorClass = Column(Integer, primary_key=True)
-    initiative = Column(Integer, primary_key=True)
-    speed = Column(Integer, primary_key=True)
-    strength = Column(Integer, primary_key=True)
-    strengthMod = Column(Integer, primary_key=True)
-    dexterity = Column(Integer, primary_key=True)
-    dexterityMod = Column(Integer, primary_key=True)
-    constitution = Column(Integer, primary_key=True)
-    constitutionMod = Column(Integer, primary_key=True)
-    intelligence = Column(Integer, primary_key=True)
-    intelligenceMod = Column(Integer, primary_key=True)
-    wisdom = Column(Integer, primary_key=True)
-    wisdomMod = Column(Integer, primary_key=True)
-    charisma = Column(Integer, primary_key=True)
-    charismaMod = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
-
-  #  def __init__(self, name,  hitPoints, armorClass, initiative, spd, dex, const, intel, wis, char):
-  #      self.hitPoints = hitPoints
-  #      self.temporaryHitPoints = hitPoints
-  #      self.armorClass = armorClass
-  #      self.initiative = initiative
-  #      self.speed = spd
-  #      self.dexterity = dex
-  #      self.constitution = const
-  #      self.intelligence = intel
-  #      self.wisdom = wis
-  #      self.charisma = char
-  #      self.name = name
-
-class Spell(Base):
-
-    __table__ = 'Spells'
-    self = Column(String(250), nullable=False)
-    spellName = Column(String(250), nullable=False)
-    spellType = Column(String(250), nullable=False)
-    castingTime = Column(String(250), nullable=False)
-    range = Column(String(250), nullable=False)
-    components = Column(String(250), nullable=False)
-    duration = Column(String(250), nullable=False)
-    description = Column(String(250), nullable=False)
-
-#    def __init__(self, spellName, spellType, castingTime, range, components, duration, description):
-#        self.spellName = spellName
-#        self.spellType = spellType
-#        self.castingTime = castingTime
-#        self.range = range
-#        self.components = components
-#        self.duration = duration
-#        self.description = description
+    def __init__(self, spellName, spellType, castingTime, range, components, duration, description):
+        self.spellName = spellName
+        self.spellType = spellType
+        self.castingTime = castingTime
+        self.range = range
+        self.components = components
+        self.duration = duration
+        self.description = description
 
 def newSpell():
     spellName = input('Spell Name: ')
@@ -98,19 +58,26 @@ def newCharacter():
     character = Character(name, hitPoints, armorClass, initiative, spd, dex, const, intel, wis, char)
     return character
 
+
+#spells never change, I should be using tuple
 spelldict = {}
+#character needs to me mutable
 characterdict = {}
 
 #change the while loop to something meaningfull
 while True:
     option = input('Select option\n' 
-                   '1. Load Character\n' 
+                   '1. Load File\n' 
                    '2. New Character\n'
                    '3. New Spell\n'
                    '4. Exit\n'
                    ': ')
     if option == '1':
-        print("not implemented")
+        with open('DnDSave.json', 'r') as fp:
+            spelldict = json.load(fp)
+            characterdict = json.load(fp)
+
+        print("not fully implemented")
     elif option == '2':
         character = newCharacter()
         name = character.name
@@ -129,9 +96,6 @@ while True:
     elif option == '4':
         break
 
-engine = create_engine('sqlite:///sqlalchemy_example.db')
-Base.metadata.create_all(engine)
-
-
-conn.commit()
-conn.close()
+with open('DnDSave.json', 'w') as fp:
+    json.dump(spelldict, fp)
+    json.dump(characterdict, fp)
