@@ -17,7 +17,7 @@ Base = declarative_base()
 
 class Character(Base):
     'Player character class'
-    __tablename__ = 'Character'
+    __table__ = 'Character'
     hitPoints = Column(Integer, primary_key=True)
     temporaryHitPoints = Column(String(250), nullable=False)
     armorClass = Column(Integer, primary_key=True)
@@ -101,6 +101,7 @@ def newCharacter():
 spelldict = {}
 characterdict = {}
 
+#change the while loop to something meaningfull
 while True:
     option = input('Select option\n' 
                    '1. Load Character\n' 
@@ -114,13 +115,17 @@ while True:
         character = newCharacter()
         name = character.name
         if name in characterdict:
-            print('Error character name already used')
+            print('Error character name already used\n')
         else:
             characterdict[name] = character
 
     elif option == '3':
         spell = newSpell()
-        spelldict[spell.spellName] = spell
+        name = spell.spellName
+        if name in spelldict:
+            print('Error spell already exists\n')
+        else:
+            spelldict[spell.spellName] = spell
     elif option == '4':
         break
 
