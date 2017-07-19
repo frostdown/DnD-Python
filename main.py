@@ -7,18 +7,29 @@ import pickle
 class Character:
     #'Player character class'
 
-    def __init__(self, name,  hitPoints, armorClass, initiative, spd, dex, const, intel, wis, char):
+    def __init__(self, name,  hitPoints, armorClass, initiative, spd, str,  dex, const, intel, wis, char, level):
         self.hitPoints = hitPoints
         self.temporaryHitPoints = hitPoints
         self.armorClass = armorClass
         self.initiative = initiative
         self.speed = spd
+        self.strength = str
         self.dexterity = dex
         self.constitution = const
         self.intelligence = intel
         self.wisdom = wis
         self.charisma = char
         self.name = name
+        self.level = level
+        self.experiance = 0
+        self.equipment = []
+        self.spells = []
+        self.skills = []
+
+    def add_xp(self, xp):
+        self.experiance += xp
+    def add_spell_to_list(self, spell):
+        self.spells.append(spell)
 
 class Spell:
 
@@ -49,37 +60,63 @@ def newCharacter():
     armorClass = input('Armor Class:')
     initiative = input('Initiative:')
     spd = input('Speed:')
+    str = input('Strength:')
     dex = input('Dexterity:')
-    const = input(' Constitution:')
+    const = input('Constitution:')
     intel = input('Intelligence:')
     wis = input('Wisdom:')
     char = input('Charisma:')
+    level = input('Level:')
 
-    character = Character(name, hitPoints, armorClass, initiative, spd, dex, const, intel, wis, char)
+    character = Character(name, hitPoints, armorClass, initiative, spd, str, dex, const, intel, wis, char, level)
     return character
 
+def playCharacter(player, spelldict):
+    while True:
 
-#spells never change, I should be using tuple
-spelldict = {}
-#character needs to me mutable
-characterdict = {}
+        option = input('1.Show available spells\n2.Show prepared spells\n3.Add to spell list\n:')
+        if option == '1':
+            for x in player.spells:
+                print(x.spellName, ':')
+                print('Casting time:', x.castingTime)
+                print('Range:', x.range)
+                print('Duration:', x.duration)
+                print(x.description, '\n')
+        elif option == '2':
+            #del player.spells[:]
+            break
+        elif option == '3':
+            for x in spelldict:
+                print(x)
+            newspellname = input('Spell name:')
+            newspell = spelldict[newspellname]
+            player.add_spell_to_list(newspell)
+    return player
+
+with open('DnDSave.p', 'rb') as fp:
+    spelldict = pickle.load(fp)
+with open('DnDcharSave.p', 'rb') as pp:
+    characterdict = pickle.load(pp)
+
+#characterdict = {}
 
 #change the while loop to something meaningfull
 while True:
     option = input('Select option\n' 
-                   '1. Load File\n' 
+                   '1. Load Character\n' 
                    '2. New Character\n'
                    '3. New Spell\n'
                    '4. Exit\n'
                    ': ')
     if option == '1':
-        with open('DnDSave.p', 'rb') as fp:
-            spelldict = pickle.load(fp)
-            #characterdict = pickle.load(fp)
-            for x in spelldict:
-                print(x)
+        for x in characterdict:
+            print(x)
+        name = input('Character Name:')
+        currentCharacter = characterdict[name]
 
-        print("not fully implemented")
+        currentCharacter = playCharacter(currentCharacter, spelldict)
+        characterdict.pop(name)
+        characterdict[name] = currentCharacter
 
     elif option == '2':
         character = newCharacter()
@@ -101,4 +138,5 @@ while True:
 
 with open('DnDSave.p', 'wb') as fp:
     pickle.dump(spelldict, fp)
-    #json.dump(characterdict, fp)
+with open('DnDcharSave.p', 'wb') as pp:
+    pickle.dump(characterdict, pp)
