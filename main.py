@@ -2,7 +2,7 @@
 
 import sys
 import os
-import json
+import pickle
 
 class Character:
     #'Player character class'
@@ -32,28 +32,28 @@ class Spell:
         self.description = description
 
 def newSpell():
-    spellName = input('Spell Name: ')
-    spellType = input('Spell Type: ')
-    castingTime = input('Casting Time: ')
-    range = input('Range: ')
-    components = input('Components: ')
-    duration = input('Duration: ')
-    description = input('Description: ')
+    spellName = input('Spell Name:')
+    spellType = input('Spell Type:')
+    castingTime = input('Casting Time:')
+    range = input('Range:')
+    components = input('Components:')
+    duration = input('Duration:')
+    description = input('Description:')
 
     spell = Spell(spellName, spellType, castingTime, range, components, duration, description)
     return spell
 
 def newCharacter():
-    name = input('Name: ')
-    hitPoints = input('Hit Points: ')
-    armorClass = input('Armor Class: ')
-    initiative = input('Initiative: ')
-    spd = input('Speed: ')
+    name = input('Name:')
+    hitPoints = input('Hit Points:')
+    armorClass = input('Armor Class:')
+    initiative = input('Initiative:')
+    spd = input('Speed:')
     dex = input('Dexterity:')
-    const = input(' Constitution: ')
-    intel = input('Intelligence: ')
-    wis = input('Wisdom: ')
-    char = input('Charisma: ')
+    const = input(' Constitution:')
+    intel = input('Intelligence:')
+    wis = input('Wisdom:')
+    char = input('Charisma:')
 
     character = Character(name, hitPoints, armorClass, initiative, spd, dex, const, intel, wis, char)
     return character
@@ -73,11 +73,14 @@ while True:
                    '4. Exit\n'
                    ': ')
     if option == '1':
-        with open('DnDSave.json', 'r') as fp:
-            spelldict = json.load(fp)
-            characterdict = json.load(fp)
+        with open('DnDSave.p', 'rb') as fp:
+            spelldict = pickle.load(fp)
+            #characterdict = pickle.load(fp)
+            for x in spelldict:
+                print(x)
 
         print("not fully implemented")
+
     elif option == '2':
         character = newCharacter()
         name = character.name
@@ -96,6 +99,6 @@ while True:
     elif option == '4':
         break
 
-with open('DnDSave.json', 'w') as fp:
-    json.dump(spelldict, fp)
-    json.dump(characterdict, fp)
+with open('DnDSave.p', 'wb') as fp:
+    pickle.dump(spelldict, fp)
+    #json.dump(characterdict, fp)
