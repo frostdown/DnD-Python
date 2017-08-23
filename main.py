@@ -1,5 +1,4 @@
 #!/usr/bin/python
-
 import sys
 import os
 import pickle
@@ -21,13 +20,13 @@ class Character:
         self.charisma = char
         self.name = name
         self.level = level
-        self.experiance = 0
+        self.experience = 0
         self.equipment = []
         self.spells = []
         self.skills = []
 
     def add_xp(self, xp):
-        self.experiance += xp
+        self.experience += xp
     def add_spell_to_list(self, spell):
         self.spells.append(spell)
 
